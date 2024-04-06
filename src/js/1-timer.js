@@ -101,6 +101,12 @@
 // });
 
 
+
+
+
+
+
+
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import iziToast from "izitoast";
@@ -186,3 +192,63 @@ flatpickr(dateTimePicker, {
     defaultDate: new Date(),
     minuteIncrement: 1,
 });
+
+startBtn.addEventListener('click', () => {
+    const selectedDate = new Date(dateTimePicker.value).getTime();
+
+    // Перевірка на валідність дати та часу
+    if (isNaN(selectedDate) || selectedDate <= Date.now()) {
+        iziToast.error({ message: "Please choose a future date and time" });
+        return;
+    }
+
+    // Оновлення інтерфейсу
+    updateTimer(selectedDate);
+
+    // Запуск таймера
+    interval = setInterval(() => {
+        updateTimer(selectedDate);
+    }, 1000);
+
+    // Вимикаємо кнопку "Start" та поле вибору дати
+    startBtn.disabled = true;
+    dateTimePicker.disabled = true;
+});
+
+
+const options = {
+    enableTime: true,
+    time_24hr: true,
+    defaultDate: new Date(),
+    minuteIncrement: 1,
+    onClose(selectedDates) {
+        if (selectedDates[0] < new Date()) {
+            iziToast.error({ message: "Please choose a future date and time" });
+            startBtn.disabled = true;
+        } else {
+            startBtn.disabled = false;
+        }
+    },
+};
+
+    // Оновлення інтерфейсу
+    updateTimer(selectedDate);
+
+    // Запуск таймера
+    interval = setInterval(() => {
+        updateTimer(selectedDate);
+    }, 1000);
+
+// Ініціалізація календаря flatpickr
+flatpickr(dateTimePicker, {
+    enableTime: true,
+    time_24hr: true,
+    defaultDate: new Date(),
+    minuteIncrement: 1,
+});
+
+// Деактивація кнопки "Start" при завантаженні сторінки
+startBtn.disabled = true;
+
+// Після завершення роботи таймера розблоковуємо інпут для вибору дати
+dateTimePicker.disabled = false;
